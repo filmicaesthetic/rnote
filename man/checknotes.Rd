@@ -4,7 +4,14 @@
 \alias{checknotes}
 \title{Recall notes you've made with jotdown() By default, only notes from the current project will be recalled, to recall all notes, set current_project = FALSE}
 \usage{
-checknotes(topic = "all", current_project = TRUE, n = 10)
+checknotes(topic = "all", current_project = FALSE, n = 10)
+}
+\arguments{
+\item{topic}{specify a topic to return just notes containing that tag, returns all by default}
+
+\item{current_project}{specify whether you want to return notes from just this project, FALSE by default}
+
+\item{n}{maximum number of notes to display}
 }
 \description{
 Recall notes you've made with jotdown() By default, only notes from the current project will be recalled, to recall all notes, set current_project = FALSE

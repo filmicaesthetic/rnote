@@ -6,6 +6,11 @@
 \usage{
 jotdown(note, topics)
 }
+\arguments{
+\item{note}{text content to be stored as a note}
+
+\item{topics}{tag(s) added to the note for filtering with checknotes()}
+}
 \description{
 Make a note to yourself that you can recall later in the console from any project.
 }
