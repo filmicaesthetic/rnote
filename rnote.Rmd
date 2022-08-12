@@ -1,0 +1,30 @@
+---
+title: "Vignette Title"
+author: "Vignette Author"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+rnote is a simple package that allows you to make notes and recall them from any project by saving them to the package directory.
+
+Make a note with:
+```{r}
+rnote::jotdown(note = "this is a note", topics = c("test_topic1", "test_topic2"))
+```
+
+Recall notes to console with:
+```{r}
+rnote::checknotes(topic = "test_topic1", current_project = FALSE, n = 10)
+```
+
