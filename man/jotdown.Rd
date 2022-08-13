@@ -4,7 +4,7 @@
 \alias{jotdown}
 \title{Make a note to yourself that you can recall later in the console from any project.}
 \usage{
-jotdown(note, topics)
+jotdown(note, topics = "general")
 }
 \arguments{
 \item{note}{text content to be stored as a note}

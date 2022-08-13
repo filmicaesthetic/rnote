@@ -4,7 +4,7 @@
 \alias{backup.notes}
 \title{Back up your notes to a new location}
 \usage{
-backup.notes(file = "notes.csv", current_project = FALSE)
+backup.notes(file = "rnote_notes.csv", current_project = FALSE)
 }
 \arguments{
 \item{file}{location to save new file}

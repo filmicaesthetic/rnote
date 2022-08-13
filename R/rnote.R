@@ -10,7 +10,7 @@ dir.create("inst/extdata")
 #' @param note text content to be stored as a note
 #' @param topics tag(s) added to the note for filtering with checknotes()
 #' @export
-jotdown <- function(note, topics) {
+jotdown <- function(note, topics = "general") {
   if (file.exists(paste0(.libPaths()[1], "/rnote/extdata/notepad.csv")) == FALSE) {
     pad_st <- data.frame(note_id = c(0),
                           date = c(as.character(as.Date(Sys.Date()))),
@@ -121,7 +121,7 @@ checknotes <- function(topic = "all", current_project = FALSE, n = 10) {
 #' @param file location to save new file
 #' @param current_project specify whether to save all notes, or just notes from the current project
 #' @export
-backup.notes <- function(file = "notes.csv", current_project = FALSE) {
+backup.notes <- function(file = "rnote_notes.csv", current_project = FALSE) {
   if (file.exists(paste0(.libPaths()[1], "/rnote/extdata/notepad.csv")) == FALSE) {
     print("No notes found")
   } else {
