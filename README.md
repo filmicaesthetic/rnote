@@ -40,15 +40,3 @@ rnote::checknotes(topic = "test_topic1", current_project = TRUE, n = 10)
 ``` r
 rnote::backup.notes(file = "notes.csv", current_project = FALSE)
 ```
-
-## Demo video
-
-<blockquote class="twitter-tweet">
-<p lang="en" dir="ltr">
-<a href="https://t.co/uoEuCTIioX">pic.twitter.com/uoEuCTIioX</a>
-</p>
-— Dan (@FilmicAesthetic)
-<a href="https://twitter.com/FilmicAesthetic/status/1558535899352375302?ref_src=twsrc%5Etfw">August
-13, 2022</a>
-</blockquote>
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
