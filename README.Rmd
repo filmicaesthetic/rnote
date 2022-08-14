@@ -45,9 +45,3 @@ rnote::checknotes(topic = "test_topic1", current_project = TRUE, n = 10)
 ```{r eval = FALSE}
 rnote::backup.notes(file = "notes.csv", current_project = FALSE)
 ```
-
-## Demo video
-
-<video width="640" height="480" controls>
-  <source src="vignettes/rnote_demo_video.mp4" type="video/mp4">
-</video>
