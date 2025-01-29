@@ -2,17 +2,18 @@
 % Please edit documentation in R/rnote.R
 \name{checknotes}
 \alias{checknotes}
-\title{Recall notes you've made with jotdown() By default, only notes from the current project will be recalled, to recall all notes, set current_project = FALSE}
+\title{Print the most recent notes in a formatted, readable style}
 \usage{
 checknotes(topic = "all", current_project = FALSE, n = 10)
 }
 \arguments{
-\item{topic}{specify a topic to return just notes containing that tag, returns all by default}
+\item{topic}{The topic to filter notes by, default is "all", resulting in no filter.}
 
-\item{current_project}{specify whether you want to return notes from just this project, FALSE by default}
+\item{current_project}{If TRUE, only notes from the current project will be returned.}
 
-\item{n}{maximum number of notes to display}
+\item{n}{The number of most recent notes to print. Defaults to 10.}
 }
 \description{
-Recall notes you've made with jotdown() By default, only notes from the current project will be recalled, to recall all notes, set current_project = FALSE
+This function prints the most recent notes to the console
+including the note, date, project of origin and related topics
 }

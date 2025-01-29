@@ -1,139 +1,142 @@
 
-dir.create("inst")
-dir.create("inst/extdata")
-
-#' Make a note to yourself that you can recall later in the console from any project.
-#' @importFrom utils read.csv
-#' @importFrom utils write.csv
-#' @importFrom utils stack
-#' @importFrom stats setNames
-#' @param note text content to be stored as a note
-#' @param topics tag(s) added to the note for filtering with checknotes()
+#' Create a new note and save it to the note archive
+#'
+#' The \code{jotdown} function allows you to store notes with associated topics
+#' to a centralised archive and optionally also save them to the current project directory.
+#' It creates a unique note ID, appends the note to an existing file (or creates a new one),
+#' and saves the updated list of notes.
+#'
+#' @param note A character string containing the content of the note to be saved.
+#' @param topics A character vector of topics associated with the note (defaults to "general").
+#'   These topics are used for filtering and organization. The topics are stored as a comma-separated string.
+#'
+#' @return This function does not return any value. It saves the note to the file system.
+#'
+#' @details
+#' The function saves the note to an RDS file within the central archive directory, using a file
+#' name derived from the current project name and topics. It checks if the file exists and appends
+#' the note to it. If the file doesn't exist, it creates a new one. Additionally, if the project directory
+#' is initialized, the note will also be saved in the project directory for local project-specific note storage.
+#'
+#' @examples
+#' # Example of creating a note with a topic "general"
+#' jotdown("This is my note", topics = "general")
+#'
+#' # Example of creating a note with multiple topics
+#' jotdown("This is another note", topics = c("bug", "urgent"))
+#'
+#' @importFrom stats runif
 #' @export
 jotdown <- function(note, topics = "general") {
-  if (file.exists(paste0(.libPaths()[1], "/rnote/extdata/notepad.csv")) == FALSE) {
-    pad_st <- data.frame(note_id = c(0),
-                          date = c(as.character(as.Date(Sys.Date()))),
-                          project = c("test"),
-                          topics = c("welcome"),
-                          note = c("Welcome to rnote"))
+  if (is.null(.rnote_dir)) stop("rnote directory is not initialized.")
+
+  # get current project name
+  proj_name <- gsub(".*\\/", "", getwd())
+
+  # Create a file name
+  file_name <- paste0(proj_name, "_", paste(topics, collapse = "_"), ".rds")
+  file_path <- paste(.rnote_dir, file_name, sep = "/")
+
+  # Check if file exists and load existing data if it does
+  if (file.exists(file_path)) {
+    note_data <- readRDS(file_path)
   } else {
-    # import existing notes
-    pad_st <- read.csv(paste0(.libPaths()[1],"/rnote/extdata/notepad.csv"))
+    note_data <- list()  # Start with an empty list if no file exists
   }
 
-  orig_dir <- getwd()
-  proj_name <- gsub(".*\\/", "", getwd())
-  setwd(paste0(.libPaths()[1], "/rnote"))
+  # Add new note
+  note_data[[length(note_data) + 1]] <- list(
+    note_id = paste0(gsub("[^0-9]", "", Sys.time()), round(runif(1, 10000, 99999))),
+    timestamp = Sys.time(),
+    project = proj_name,
+    topics = paste(topics, collapse = ','),
+    note = note
+  )
 
-  # create new note
-  newnote <- data.frame(note_id = c(nrow(pad_st)),
-                        date = c(as.character(Sys.Date())),
-                        project = c(proj_name),
-                        topics = c(paste(topics, collapse = ',')),
-                        note = c(note))
-  # append new note
-  pad_f <- rbind(pad_st, newnote)
+  # Save the updated file
+  saveRDS(note_data, file_path)
 
-  # save updated notepad
-  write.csv(pad_f, "extdata/notepad.csv", row.names = F)
-
-  #copy notepad
-  pad_a <- pad_f
-
-  # split topics to individual rows
-  t1 <- data.frame(stack(setNames(strsplit(pad_a$topics, ","), pad_a$note_id)))
-  # rename columns
-  colnames(t1) <- c("topics", "note_id")
-  # remove original topics column
-  pad_a$topics <- NULL
-  # merge to create long df
-  note_arc <- merge(pad_a, t1, by = "note_id")
-
-  #save notepad archive
-  write.csv(note_arc, "extdata/notepad_archive.csv", row.names = F)
-
-  setwd(orig_dir)
+  # Save to project directory if initialised
+  if(dir.exists(file.path(getwd(), "rnotes"))) {
+    saveRDS(note_data, paste(file.path(getwd(), "rnotes"), file_name, sep = "/"))
+  }
 }
 
-#' Recall notes you've made with jotdown() By default, only notes from the current project will be recalled, to recall all notes, set current_project = FALSE
-#' @param topic specify a topic to return just notes containing that tag, returns all by default
-#' @param current_project specify whether you want to return notes from just this project, FALSE by default
-#' @param n maximum number of notes to display
+#' Print the most recent notes in a formatted, readable style
+#'
+#' This function prints the most recent notes to the console
+#' including the note, date, project of origin and related topics
+#'
+#' @param topic The topic to filter notes by, default is "all", resulting in no filter.
+#' @param current_project If TRUE, only notes from the current project will be returned.
+#' @param n The number of most recent notes to print. Defaults to 10.
+#' @importFrom crayon green blue yellow magenta cyan
+#' @importFrom utils head
 #' @export
 checknotes <- function(topic = "all", current_project = FALSE, n = 10) {
-  orig_dir <- getwd()
-  proj_name <- gsub(".*\\/", "", getwd())
-  setwd(paste0(.libPaths()[1], "/rnote"))
 
-  if (file.exists("extdata/notepad_archive.csv") == FALSE) {
-    print("No notes found")
-  } else {
+  files <- list.files(.rnote_dir, full.names = TRUE, pattern = "\\.rds$")
 
-    # import notepad archive
-    n_all <- read.csv("extdata/notepad_archive.csv")
-
-    n_sel <- n_all
-
-    # filter if topic provided
-    if (topic != "all") {
-      n_sel <- n_sel[n_sel$topics == topic,]
-    }
-    # filter if project provided
-    if (current_project == TRUE) {
-      n_sel <- n_sel[n_sel$project == proj_name,]
-    }
-    # arrange by newest first
-    n_srt <- n_sel[order(-n_sel[,"note_id"]), , drop = FALSE]
-    # select relevant columns
-    n_col <- n_srt[, c('date', 'note', 'project')]
-    # remove duplicates
-    n_uni <- unique(n_col)
-    # get top notes
-    max_n <- ifelse(nrow(n_uni) < 10, nrow(n_uni), 10)
-    # number of top notes
-    n_top <- n_uni[1:max_n,c('date', 'project', 'note')]
-
-    proj_text <- if (current_project == TRUE) {
-      " in this project"
-    } else {
-      ""
-    }
-
-    topic_text <- if (topic == "all") {
-      ""
-    } else {
-      paste0(" under the topic ", topic)
-    }
-
-    if (is.na(n_top$date[1])) {
-      print(paste0("No notes found",proj_text, topic_text, ".'"))
-    } else {
-      writeLines(paste(paste(n_top$project, n_top$date, sep = " | "), n_top$note, sep = "\n"))
-    }
-
-  }
-
-  setwd(orig_dir)
-}
-
-#' Back up your notes to a new location
-#' @param file location to save new file
-#' @param current_project specify whether to save all notes, or just notes from the current project
-#' @export
-backup.notes <- function(file = "rnote_notes.csv", current_project = FALSE) {
-  if (file.exists(paste0(.libPaths()[1], "/rnote/extdata/notepad.csv")) == FALSE) {
-    print("No notes found")
-  } else {
-    # import existing notes
-    note_st <- read.csv(paste0(.libPaths()[1],"/rnote/extdata/notepad.csv"))
-
+  # Filter by project name if specified
+  if (current_project == T) {
+    # get current project name
     proj_name <- gsub(".*\\/", "", getwd())
 
-    if (current_project == TRUE) {
-      note_st <- note_st[note_st$project == proj_name,]
-    }
+    files <- files[grepl(proj_name, files)]
+  }
 
-    write.csv(note_st, file, row.names = FALSE)
+  # Filter by topic if specified
+  if (topic != "all") {
+    files <- files[grepl(topic, files)]
+  }
+
+  notes <- lapply(files, readRDS)
+  notes <- unlist(notes, recursive = FALSE)
+
+  # Sort notes by timestamp in descending order
+  note_indices <- order(sapply(notes, function(x) x$timestamp), decreasing = TRUE)
+
+  # Subset the top 'n' most recent notes
+  notes_sorted <- notes[note_indices]
+  notes_to_print <- head(notes_sorted, n)
+
+  # Loop through the selected notes and print them
+  cat(blue("Your recent notes", "\n\n"))
+  for (note in notes_to_print) {
+    cat(green(note$project), "|", cyan(as.Date(note$timestamp)), "\n")
+    cat(yellow(paste0("#", note$topics)), "\n\n")
+    # cat(magenta("Topics:"), paste(note$topics, collapse = ", "), "\n")
+    cat(note$note, "\n")
+    cat("\n")  # Add a blank line between notes
+  }
+
+}
+
+#' Initialize Project Notes Directory
+#'
+#' Creates a local `rnotes/` directory in the current project, allowing notes
+#' to be stored and accessed within the project folder. This function is
+#' useful for collaborative work, where team members can share notes related
+#' to a specific project.
+#'
+#' If the directory already exists, the function does nothing and informs
+#' the user.
+#'
+#' @return A message indicating whether the project notes directory was created
+#' or if it already exists.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' init_project_notes()  # Initializes the project notes directory
+#' }
+init_project_notes <- function() {
+  project_dir <- file.path(getwd(), "rnotes")
+
+  if (!dir.exists(project_dir)) {
+    dir.create(project_dir, recursive = TRUE)
+    message("Project notes initialized! Notes will now be stored in ", project_dir)
+  } else {
+    message("Project notes already initialized.")
   }
 }

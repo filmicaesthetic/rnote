@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-rnote is a simple package that allows you to make notes and recall them from any project by saving them to the package directory.
+rnote is a simple package that allows you to make notes and recall them from any project.
 
 ## Installation
 
@@ -28,6 +28,10 @@ You can install the development version of rnote from [GitHub](https://github.co
 # install.packages("devtools")
 devtools::install_github("filmicaesthetic/rnote")
 ```
+
+## Changelog
+
+See the [NEWS.md](NEWS.md) file for details on what's new in each release.
 
 ## Example
 
@@ -41,7 +45,7 @@ rnote::jotdown(note = "this is a note", topics = c("test_topic1", "test_topic2")
 rnote::checknotes(topic = "test_topic1", current_project = TRUE, n = 10)
 ```
 
-### Back up notes to new location:
+### Save a copy of your notes to your project directory:
 ```{r eval = FALSE}
-rnote::backup.notes(file = "notes.csv", current_project = FALSE)
+rnote::init_project_notes()
 ```

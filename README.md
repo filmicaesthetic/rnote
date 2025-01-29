@@ -19,6 +19,11 @@ You can install the development version of rnote from
 devtools::install_github("filmicaesthetic/rnote")
 ```
 
+## Changelog
+
+See the [NEWS.md](NEWS.md) file for details on what's new in each release.
+
+
 ## Example
 
 ### Make a note:
@@ -35,8 +40,8 @@ rnote::checknotes(topic = "test_topic1", current_project = TRUE, n = 10)
 #> this is a note
 ```
 
-### Back up notes to new location:
+### Save a copy of your notes to your project directory:
 
 ``` r
-rnote::backup.notes(file = "notes.csv", current_project = FALSE)
+rnote::init_project_notes()
 ```

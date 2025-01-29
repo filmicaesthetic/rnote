@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 library(rnote)
 ```
 
-rnote is a simple package that allows you to make notes and recall them from any project by saving them to the package directory.
+rnote is a simple package that allows you to make notes and recall them from any project.
 
 ### Make a note:
 ```{r}
@@ -30,7 +30,9 @@ rnote::jotdown(note = "this is a note", topics = c("test_topic1", "test_topic2")
 rnote::checknotes(topic = "test_topic1", current_project = FALSE, n = 10)
 ```
 
-### Back up notes to new location:
+### Initialise project notes:
+Save your notes to a directory in your project folder, as well as your central archive.
+
 ```{r eval = FALSE}
-rnote::backup.notes(file = "notes.csv", current_project = FALSE)
+rnote::init_project_notes()
 ```

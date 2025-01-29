@@ -2,15 +2,36 @@
 % Please edit documentation in R/rnote.R
 \name{jotdown}
 \alias{jotdown}
-\title{Make a note to yourself that you can recall later in the console from any project.}
+\title{Create a new note and save it to the note archive}
 \usage{
 jotdown(note, topics = "general")
 }
 \arguments{
-\item{note}{text content to be stored as a note}
+\item{note}{A character string containing the content of the note to be saved.}
 
-\item{topics}{tag(s) added to the note for filtering with checknotes()}
+\item{topics}{A character vector of topics associated with the note (defaults to "general").
+These topics are used for filtering and organization. The topics are stored as a comma-separated string.}
+}
+\value{
+This function does not return any value. It saves the note to the file system.
 }
 \description{
-Make a note to yourself that you can recall later in the console from any project.
+The \code{jotdown} function allows you to store notes with associated topics
+to a centralised archive and optionally also save them to the current project directory.
+It creates a unique note ID, appends the note to an existing file (or creates a new one),
+and saves the updated list of notes.
+}
+\details{
+The function saves the note to an RDS file within the central archive directory, using a file
+name derived from the current project name and topics. It checks if the file exists and appends
+the note to it. If the file doesn't exist, it creates a new one. Additionally, if the project directory
+is initialized, the note will also be saved in the project directory for local project-specific note storage.
+}
+\examples{
+# Example of creating a note with a topic "general"
+jotdown("This is my note", topics = "general")
+
+# Example of creating a note with multiple topics
+jotdown("This is another note", topics = c("bug", "urgent"))
+
 }
