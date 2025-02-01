@@ -35,8 +35,8 @@ rnote::jotdown(note = "this is a note", topics = c("test_topic1", "test_topic2")
 ### Recall notes to console:
 
 ``` r
-rnote::checknotes(topic = "test_topic1", current_project = TRUE, n = 10)
-#> rnote | 2022-08-14
+rnote::checknotes(current_project = TRUE, n = 10, topic = "test_topic1")
+#> rnote | 2025-01-29
 #> this is a note
 ```
 
@@ -44,4 +44,12 @@ rnote::checknotes(topic = "test_topic1", current_project = TRUE, n = 10)
 
 ``` r
 rnote::init_project_notes()
+```
+
+### Recall project notes to console:
+
+``` r
+rnote::check_project_notes(n = 10, topic = "test_topic1")
+#> rnote | 2025-01-29
+#> this is a note
 ```
