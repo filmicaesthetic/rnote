@@ -2,4 +2,6 @@
 .Rhistory
 .RData
 .Ruserdata
-inst/doc
+rnotes
+rnote.Rproj
+README.Rmd

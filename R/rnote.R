@@ -73,7 +73,7 @@ jotdown <- function(note, topics = "general") {
 #' @importFrom crayon green blue yellow magenta cyan
 #' @importFrom utils head
 #' @export
-checknotes <- function(topic = "all", current_project = FALSE, n = 10) {
+checknotes <- function(current_project = FALSE, n = 10, topic = "all") {
 
   files <- list.files(.rnote_dir, full.names = TRUE, pattern = "\\.rds$")
 
@@ -108,6 +108,53 @@ checknotes <- function(topic = "all", current_project = FALSE, n = 10) {
     # cat(magenta("Topics:"), paste(note$topics, collapse = ", "), "\n")
     cat(note$note, "\n")
     cat("\n")  # Add a blank line between notes
+  }
+
+}
+
+#' Print the most recent notes saved in the current project in a
+#' formatted, readable style
+#'
+#' This function prints the most recent notes to the console
+#' including the note, date, project of origin and related topics
+#'
+#' @param topic The topic to filter notes by, default is "all", resulting in no filter.
+#' @param n The number of most recent notes to print. Defaults to 10.
+#' @importFrom crayon green blue yellow magenta cyan
+#' @importFrom utils head
+#' @export
+check_project_notes <- function(n = 10, topic = "all") {
+
+  # get files from project folder
+  files <- list.files("rnotes", full.names = TRUE, pattern = "\\.rds$")
+
+  if (length(files) == 0) {
+    message("Project notes have not been initialized for this project.")
+  } else {
+    # Filter by topic if specified
+    if (topic != "all") {
+      files <- files[grepl(topic, files)]
+    }
+
+    notes <- lapply(files, readRDS)
+    notes <- unlist(notes, recursive = FALSE)
+
+    # Sort notes by timestamp in descending order
+    note_indices <- order(sapply(notes, function(x) x$timestamp), decreasing = TRUE)
+
+    # Subset the top 'n' most recent notes
+    notes_sorted <- notes[note_indices]
+    notes_to_print <- head(notes_sorted, n)
+
+    # Loop through the selected notes and print them
+    cat(blue("Your recent notes", "\n\n"))
+    for (note in notes_to_print) {
+      cat(green(note$project), "|", cyan(as.Date(note$timestamp)), "\n")
+      cat(yellow(paste0("#", note$topics)), "\n\n")
+      # cat(magenta("Topics:"), paste(note$topics, collapse = ", "), "\n")
+      cat(note$note, "\n")
+      cat("\n")  # Add a blank line between notes
+    }
   }
 
 }
