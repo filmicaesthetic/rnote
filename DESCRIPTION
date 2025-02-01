@@ -1,7 +1,7 @@
 Package: rnote
 Type: Package
 Title: Your Console-Based Notepad
-Version: 0.2.0
+Version: 0.2.1
 Author: Dan Fellowes
 Maintainer: The package maintainer <filmicaesthetic@gmail.com>
 Description: rnote is a simple package that allows you to make notes and recall them from any project by saving them to the package directory.
